@@ -17,6 +17,7 @@ import { useAuth } from '../app/useAuth'
 import { useTheme } from '../app/useTheme'
 import { useGenerateRecurring } from '../features/transactions/recurringApi'
 import { supabase } from '../lib/supabase'
+import { ColorMenu } from './ColorMenu'
 import { Logo } from './Logo'
 import { PageSkeleton } from './Skeleton'
 
@@ -173,6 +174,7 @@ export function Layout() {
         <Logo />
         <div className="flex items-center gap-1">
           <ThemeButton />
+          <ColorMenu placement="bottom" />
           <button
             onClick={signOut}
             aria-label="Cerrar sesión"
@@ -226,6 +228,10 @@ export function Layout() {
 
             <div className={`flex gap-1 ${collapsed ? 'flex-col items-center' : 'items-center'}`}>
               <ThemeButton className="text-rail-muted hover:bg-white/10 hover:text-rail-text" />
+              <ColorMenu
+                placement="right"
+                className="text-rail-muted hover:bg-white/10 hover:text-rail-text"
+              />
               <button
                 onClick={signOut}
                 aria-label="Cerrar sesión"

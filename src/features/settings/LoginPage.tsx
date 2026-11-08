@@ -1,5 +1,6 @@
 import { lazy, Suspense, useState, type FormEvent } from 'react'
 import { Eye, EyeOff, LoaderCircle } from 'lucide-react'
+import { ColorMenu } from '../../components/ColorMenu'
 import { Logo } from '../../components/Logo'
 import { supabase } from '../../lib/supabase'
 
@@ -42,6 +43,13 @@ export default function LoginPage() {
       </Suspense>
 
       <Logo className="absolute left-6 top-6 z-10 md:left-10 md:top-10" />
+
+      <div className="absolute bottom-6 left-6 z-20 md:bottom-10 md:left-10">
+        <ColorMenu
+          placement="top"
+          className="h-11 w-11 rounded-full border border-border bg-surface/60 backdrop-blur-sm"
+        />
+      </div>
 
       <main className="relative z-10 flex min-h-screen items-center justify-center px-5 py-24 lg:justify-start lg:py-0 lg:pl-[9vw]">
         <form

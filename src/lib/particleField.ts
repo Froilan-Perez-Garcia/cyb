@@ -1,3 +1,5 @@
+import { getHue, unitRgb } from './accent'
+
 type Options = { mobile: boolean }
 
 export type ParticleField = {
@@ -300,6 +302,9 @@ precision highp float;
 in vec4 vRnd;
 in float vFade;
 uniform float uTime;
+uniform vec3 uBase;
+uniform vec3 uLight;
+uniform vec3 uRare;
 out vec4 outColor;
 void main() {
   vec2 c = gl_PointCoord * 2.0 - 1.0;
@@ -308,8 +313,8 @@ void main() {
   vec3 n = vec3(c.x, -c.y, sqrt(1.0 - d));
   float light = 0.55 + 0.45 * max(dot(n, normalize(vec3(-0.4, 0.6, 0.7))), 0.0);
   float rare = pow(vRnd.z, 40.0);
-  vec3 base = mix(vec3(0.20, 0.46, 0.42), vec3(0.72, 0.92, 0.88), vRnd.x * 0.45);
-  vec3 col = mix(base, vec3(0.18, 0.83, 0.75), rare);
+  vec3 base = mix(uBase, uLight, vRnd.x * 0.45);
+  vec3 col = mix(base, uRare, rare);
   float twinkle = 1.0 + rare * 2.5 * (0.5 + 0.5 * sin(uTime * 3.0 + vRnd.y * 20.0));
   float alpha = (0.34 + 0.55 * rare) * (1.0 - d * 0.6) * vFade;
   outColor = vec4(col * light * twinkle, alpha);
@@ -508,7 +513,23 @@ export function createParticleField(canvas: HTMLCanvasElement, options: Options)
     'uModel',
     'uPointScale',
     'uTime',
+    'uBase',
+    'uLight',
+    'uRare',
   ])
+  let hue = -1
+  let baseColor: number[] = []
+  let lightColor: number[] = []
+  let rareColor: number[] = []
+  let bgColor: number[] = []
+  const syncColors = () => {
+    if (hue === getHue()) return
+    hue = getHue()
+    baseColor = unitRgb(hue, 39, 33)
+    lightColor = unitRgb(hue, 50, 80)
+    rareColor = unitRgb(hue, 66, 50)
+    bgColor = unitRgb(hue, 36, 5.5)
+  }
 
   const velocity = pair(simSize, gl.RGBA16F, gl.HALF_FLOAT, gl.LINEAR)
   const pressure = pair(simSize, gl.RGBA16F, gl.HALF_FLOAT, gl.LINEAR)
@@ -754,7 +775,8 @@ export function createParticleField(canvas: HTMLCanvasElement, options: Options)
     blit(positions.write)
     positions.swap()
 
-    gl.clearColor(8 / 255, 17 / 255, 15 / 255, 1)
+    syncColors()
+    gl.clearColor(bgColor[0], bgColor[1], bgColor[2], 1)
     gl.bindFramebuffer(gl.FRAMEBUFFER, null)
     gl.viewport(0, 0, canvas.width, canvas.height)
     gl.clear(gl.COLOR_BUFFER_BIT)
@@ -766,6 +788,9 @@ export function createParticleField(canvas: HTMLCanvasElement, options: Options)
     gl.uniform1i(pointP.u.uSize, particleSize)
     gl.uniform1f(pointP.u.uPointScale, pointScale)
     gl.uniform1f(pointP.u.uTime, time)
+    gl.uniform3fv(pointP.u.uBase, baseColor)
+    gl.uniform3fv(pointP.u.uLight, lightColor)
+    gl.uniform3fv(pointP.u.uRare, rareColor)
     gl.uniformMatrix4fv(pointP.u.uViewProj, false, viewProj)
     gl.uniformMatrix4fv(pointP.u.uModel, false, model)
     gl.bindVertexArray(vao)

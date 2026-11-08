@@ -2,6 +2,7 @@ import { LogOut, UserRound } from 'lucide-react'
 import { useAuth } from '../../app/useAuth'
 import { PageHeader } from '../../components/PageHeader'
 import { supabase } from '../../lib/supabase'
+import { AccentPicker } from './AccentPicker'
 import { DeleteAccount } from './DeleteAccount'
 import { ExportData } from './ExportData'
 import { SettingsSection } from './SettingsSection'
@@ -24,6 +25,7 @@ export default function AjustesPage() {
         </div>
       </SettingsSection>
 
+      <AccentPicker />
       <TwoFactor />
       <ExportData />
       <DeleteAccount />
