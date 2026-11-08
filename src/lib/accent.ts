@@ -57,7 +57,19 @@ export const readHue = () => {
 
 let current = DEFAULT_HUE
 
+const stored = () => {
+  try {
+    return localStorage.getItem(KEY) !== null
+  } catch {
+    return false
+  }
+}
+
+let chosen = stored()
+
 export const getHue = () => current
+
+export const isChosen = () => chosen
 
 export const applyHue = (hue: number) => {
   current = hue
@@ -74,6 +86,7 @@ export const applyHue = (hue: number) => {
 }
 
 export const saveHue = (hue: number) => {
+  chosen = true
   applyHue(hue)
   try {
     localStorage.setItem(KEY, String(hue))
