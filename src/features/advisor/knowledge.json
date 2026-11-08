@@ -1,0 +1,153 @@
+[
+  {
+    "id": "avalancha",
+    "title": "Método avalancha",
+    "keywords": [
+      "avalancha",
+      "metodo avalancha",
+      "mayor interes",
+      "interes mas alto",
+      "tasa mas alta"
+    ],
+    "answer": "En el método avalancha pagas los mínimos de todas tus deudas y todo el dinero extra lo mandas a la que tiene la tasa de interés más alta. Cuando la liquidas, ese dinero pasa a la siguiente con mayor tasa. Es el método que, en matemáticas, te cuesta menos interés total. Su desventaja es que, si la deuda más cara también es grande, tardas más en ver una deuda saldada."
+  },
+  {
+    "id": "bola-de-nieve",
+    "title": "Método bola de nieve",
+    "keywords": ["bola de nieve", "snowball", "deuda mas pequena", "saldo mas bajo", "motivacion"],
+    "answer": "En la bola de nieve pagas los mínimos de todo y el dinero extra va a la deuda de menor saldo, sin importar su interés. Al liquidarla, su pago se suma a la siguiente más pequeña. Pagas algo más de interés que con avalancha, pero ves deudas desaparecer pronto, y eso ayuda a muchas personas a no abandonar el plan."
+  },
+  {
+    "id": "personalizado",
+    "title": "Orden personalizado",
+    "keywords": ["personalizado", "elegir orden", "mi propio orden", "yo decido", "prioridad"],
+    "answer": "Con el método personalizado tú ordenas tus deudas arrastrándolas, y el plan reparte el dinero extra siguiendo ese orden. Úsalo cuando hay razones que las cifras no ven: una deuda con un familiar que quieres saldar primero, un préstamo con garantía o un acreedor que te presiona."
+  },
+  {
+    "id": "cat",
+    "title": "¿Qué es el CAT?",
+    "keywords": [
+      "cat",
+      "costo anual total",
+      "que es el cat",
+      "tasa anual",
+      "costo total del credito"
+    ],
+    "answer": "El CAT (Costo Anual Total) expresa en porcentaje anual lo que te cuesta un crédito: incluye el interés y también comisiones y otros cargos. Sirve para comparar créditos distintos entre sí. No es lo mismo que la tasa de interés: dos créditos con la misma tasa pueden tener CAT diferente por sus comisiones. En CYB el orden del plan se basa en la tasa mensual, y el CAT queda como dato informativo."
+  },
+  {
+    "id": "interes-mensual-anual",
+    "title": "Interés mensual vs. anual",
+    "keywords": [
+      "interes mensual",
+      "tasa mensual",
+      "interes anual",
+      "convertir tasa",
+      "interes compuesto"
+    ],
+    "answer": "Un interés mensual se cobra cada mes sobre el saldo, y como se acumula, el costo real en un año es mayor que multiplicar por 12. Por ejemplo, 3 % mensual compuesto es más que 36 % al año. Por eso conviene comparar siempre tasas del mismo periodo. En CYB capturas la tasa mensual de cada deuda y el plan simula el interés mes a mes."
+  },
+  {
+    "id": "pago-minimo",
+    "title": "Pago mínimo",
+    "keywords": ["pago minimo", "solo el minimo", "pagar el minimo", "minimo"],
+    "answer": "El pago mínimo es lo menos que debes pagar para no caer en mora, pero casi todo se va a intereses y casi nada baja tu saldo. Pagar solo el mínimo alarga la deuda durante años y encarece mucho el total. Úsalo como piso, no como meta: el plan de CYB paga el mínimo de todas tus deudas y manda el dinero extra a la que toca atacar."
+  },
+  {
+    "id": "pago-sin-intereses",
+    "title": "Pago para no generar intereses",
+    "keywords": [
+      "pago para no generar intereses",
+      "saldo a pagar",
+      "saldo del periodo",
+      "pago total",
+      "estado de cuenta",
+      "no generar intereses"
+    ],
+    "answer": "En una tarjeta, el pago para no generar intereses es el saldo del periodo que aparece en tu estado de cuenta, pagado antes de la fecha límite. Si lo pagas completo, normalmente no generas intereses por esas compras. Es distinto de la deuda total, que incluye compras de periodos que aún no se cobran. Por eso CYB te pide ambos datos: deuda total y saldo a pagar de este estado de cuenta."
+  },
+  {
+    "id": "fecha-corte",
+    "title": "Fecha de corte y fecha límite de pago",
+    "keywords": ["fecha de corte", "fecha limite", "dia de pago", "corte", "limite de pago"],
+    "answer": "La fecha de corte es el día en que el banco cierra tu estado de cuenta. La fecha límite de pago llega algunos días después, y es hasta cuando debes pagar sin recargos. Las compras hechas después del corte entran al siguiente periodo. En CYB puedes guardar el día de pago de cada deuda para tenerlo presente."
+  },
+  {
+    "id": "colchon",
+    "title": "Colchón para imprevistos",
+    "keywords": [
+      "colchon",
+      "fondo de emergencia",
+      "imprevistos",
+      "ahorro de emergencia",
+      "emergencia"
+    ],
+    "answer": "El colchón es una parte de tu dinero libre que no destinas a deudas, para imprevistos como una reparación o una consulta médica. Sin colchón, un imprevisto te obliga a usar la tarjeta de nuevo y la deuda vuelve a crecer. CYB aparta por defecto el 10 % de lo que te sobra tras gastos esenciales y mínimos, y puedes cambiar ese porcentaje en la pestaña Plan."
+  },
+  {
+    "id": "deudas-informales",
+    "title": "Deudas con familiares o amigos",
+    "keywords": [
+      "familiar",
+      "familiares",
+      "amigo",
+      "amigos",
+      "prestamo informal",
+      "deuda informal",
+      "sin interes",
+      "deuda personal"
+    ],
+    "answer": "Las deudas con familiares o amigos suelen no tener interés, por eso en avalancha quedan al final. Aun así importan: cuidan una relación. Si quieres saldarlas antes, usa el método personalizado y colócalas donde prefieras. Hablar con la persona y acordar un calendario de pagos realista suele ser mejor que dejar la deuda en silencio."
+  },
+  {
+    "id": "gastos-esenciales",
+    "title": "Gastos esenciales (intocables)",
+    "keywords": ["gastos esenciales", "gastos de vida", "necesidades", "intocables", "esencial"],
+    "answer": "Los gastos esenciales son los que sostienen tu vida diaria: renta, comida, transporte, servicios y similares. En CYB se marcan como esenciales por categoría, y el plan nunca propone recortarlos: solo reparte lo que queda después de cubrirlos. Si tus esenciales más los mínimos superan tus ingresos, la app te lo muestra como un faltante en vez de armar un plan irreal."
+  },
+  {
+    "id": "salir-de-deudas",
+    "title": "Pasos para salir de deudas",
+    "keywords": [
+      "salir de deudas",
+      "como pagar mis deudas",
+      "por donde empiezo",
+      "empezar a pagar",
+      "salir de deuda",
+      "salgo de mis deudas",
+      "salir de mis deudas",
+      "salir de las deudas"
+    ],
+    "answer": "Un orden sencillo: 1) registra todas tus deudas con su saldo, mínimo y tasa; 2) registra tus ingresos y tus gastos esenciales; 3) paga siempre los mínimos para no caer en mora; 4) aparta un pequeño colchón; 5) manda lo que sobra a una deuda según el método que elijas; 6) cuando liquides una, pasa su pago a la siguiente. La pestaña Plan de CYB hace los cálculos de los pasos 3 al 6."
+  },
+  {
+    "id": "ingreso-extra",
+    "title": "¿Qué hago con un ingreso extra?",
+    "keywords": ["ingreso extra", "bono", "aguinaldo", "dinero extra", "me cayo dinero"],
+    "answer": "Un ingreso extra (bono, aguinaldo, un pago que te debían) es una oportunidad para bajar deuda más rápido, porque abonar de golpe reduce el saldo sobre el que se cobran intereses. Una sugerencia es destinar todo menos tu colchón, pero tú decides cuánto. En CYB lo registras como ingreso extra y no cuenta como ingreso fijo para calcular tu plan."
+  },
+  {
+    "id": "consolidar",
+    "title": "Consolidar o reestructurar deudas",
+    "keywords": [
+      "consolidar",
+      "consolidacion",
+      "transferencia de saldo",
+      "refinanciar",
+      "reestructurar"
+    ],
+    "answer": "Consolidar es juntar varias deudas en una sola, por ejemplo con un préstamo o una transferencia de saldo. Puede ayudar si la nueva tasa y su CAT son claramente menores a las que pagas hoy, y si no te lleva a endeudarte de nuevo con las tarjetas liberadas. Compara siempre el CAT, las comisiones y el plazo total antes de decidir."
+  },
+  {
+    "id": "gastos-hormiga",
+    "title": "Gastos hormiga",
+    "keywords": ["gastos hormiga", "gastos pequenos", "cafe", "antojos", "gastos chicos"],
+    "answer": "Los gastos hormiga son compras pequeñas y frecuentes que, sumadas, pesan: un café diario, antojos, propinas. Registrarlos en Movimientos con su categoría te muestra cuánto suman al mes. No se trata de eliminarlos todos, sino de decidir cuáles valen la pena."
+  },
+  {
+    "id": "usar-cyb",
+    "title": "Cómo usar CYB",
+    "keywords": ["como usar", "como funciona", "cyb", "empezar con la app", "para que sirve"],
+    "answer": "Empieza en Bills registrando tus deudas. En Movimientos anota tus ingresos y gastos, y crea como recurrentes los fijos como la renta o el sueldo. En Plan elige tu método para atacar deudas y revisa cuánto abonar a cada una. Aquí en Asesor puedes preguntar dudas sobre deudas y, si lo necesitas, consultar tu plan personalizado."
+  }
+]

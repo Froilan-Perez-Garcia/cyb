@@ -1,0 +1,52 @@
+@import '@fontsource-variable/inter';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 246 248 249;
+  --surface: 255 255 255;
+  --border: 223 229 232;
+  --text: 17 29 36;
+  --muted: 92 109 118;
+  --accent: 13 148 136;
+  --income: 21 128 61;
+  --expense: 185 28 28;
+}
+
+:root[data-theme='dark'] {
+  --bg: 11 18 22;
+  --surface: 20 30 36;
+  --border: 38 52 60;
+  --text: 232 240 243;
+  --muted: 148 166 175;
+  --accent: 45 212 191;
+  --income: 74 222 128;
+  --expense: 248 113 113;
+}
+
+body {
+  @apply bg-bg font-sans text-text antialiased;
+  font-variant-numeric: tabular-nums;
+}
+
+button:not(:disabled) {
+  transition:
+    transform 0.1s ease,
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+button:not(:disabled):active {
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
