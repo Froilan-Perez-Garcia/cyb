@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { Download, FileDown, LoaderCircle } from 'lucide-react'
 import { downloadCsv } from '../../lib/csv'
 import { datasets } from './datasets'
+import { SettingsSection } from './SettingsSection'
 
 export function ExportData() {
   const [busyId, setBusyId] = useState<string | null>(null)
@@ -18,26 +20,33 @@ export function ExportData() {
   }
 
   return (
-    <section className="space-y-3 rounded-2xl border border-border bg-surface p-4">
-      <div>
-        <h2 className="font-semibold">Tus datos</h2>
-        <p className="text-sm text-muted">
-          Descarga una copia en CSV, que se abre en Excel o Google Sheets.
-        </p>
-      </div>
-      <div className="flex flex-wrap gap-2">
+    <SettingsSection
+      icon={FileDown}
+      title="Tus datos"
+      description="Descarga una copia en CSV, que se abre en Excel o Google Sheets."
+    >
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,8.5rem),1fr))] gap-2.5">
         {datasets.map((dataset) => (
           <button
             key={dataset.id}
             onClick={() => run(dataset)}
             disabled={busyId !== null}
-            className="rounded-lg border border-border px-4 py-2 text-sm text-muted transition-colors hover:border-accent hover:text-accent disabled:opacity-60"
+            className="btn btn-secondary"
           >
-            {busyId === dataset.id ? 'Preparando…' : dataset.label}
+            {busyId === dataset.id ? (
+              <LoaderCircle size={16} className="animate-spin" />
+            ) : (
+              <Download size={16} strokeWidth={1.75} />
+            )}
+            {dataset.label}
           </button>
         ))}
       </div>
-      {error && <p className="text-sm text-expense">{error}</p>}
-    </section>
+      {error && (
+        <p role="alert" className="text-sm text-expense">
+          {error}
+        </p>
+      )}
+    </SettingsSection>
   )
 }

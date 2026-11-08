@@ -1,5 +1,8 @@
 import { useEffect, useState, type FormEvent } from 'react'
+import { LoaderCircle, Trash2, TriangleAlert } from 'lucide-react'
+import { Portal } from '../../components/Portal'
 import { supabase } from '../../lib/supabase'
+import { SettingsSection } from './SettingsSection'
 
 const WORD = 'ELIMINAR'
 
@@ -31,71 +34,75 @@ export function DeleteAccount() {
   }
 
   return (
-    <section className="space-y-3 rounded-2xl border border-expense/50 bg-surface p-4">
-      <div>
-        <h2 className="font-semibold text-expense">Eliminar mi cuenta</h2>
-        <p className="text-sm text-muted">
-          Borra tu cuenta y todos tus datos de forma permanente. Descarga antes una copia si la
-          necesitas.
-        </p>
-      </div>
+    <SettingsSection
+      icon={Trash2}
+      title="Eliminar mi cuenta"
+      description="Borra tu cuenta y todos tus datos de forma permanente. Descarga antes una copia si la necesitas."
+      danger
+    >
       <button
         onClick={() => {
           setTyped('')
           setError('')
           setOpen(true)
         }}
-        className="rounded-lg border border-expense px-4 py-2 text-sm text-expense transition-colors hover:bg-expense hover:text-bg"
+        className="btn btn-danger"
       >
         Eliminar mi cuenta
       </button>
 
       {open && (
-        <div
-          className="fixed inset-0 z-50 flex animate-fade-in items-end justify-center bg-black/60 p-4 sm:items-center"
-          role="alertdialog"
-          aria-modal="true"
-          aria-labelledby="delete-title"
-        >
-          <form
-            onSubmit={submit}
-            className="w-full max-w-sm space-y-4 animate-pop-in rounded-2xl border border-border bg-surface p-5"
+        <Portal>
+          <div
+            className="overlay"
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="delete-title"
           >
-            <h2 id="delete-title" className="text-lg font-bold">
-              ¿Eliminar tu cuenta para siempre?
-            </h2>
-            <p className="text-sm text-muted">
-              Se borrarán tus deudas, abonos, movimientos, recurrentes y categorías. No se puede
-              deshacer. Para confirmar, escribe <strong className="text-text">{WORD}</strong>.
-            </p>
-            <input
-              value={typed}
-              onChange={(event) => setTyped(event.target.value)}
-              aria-label={`Escribe ${WORD} para confirmar`}
-              autoFocus
-              autoComplete="off"
-              className="w-full rounded-lg border border-border bg-bg px-3 py-2 outline-none focus:border-expense"
-            />
-            {error && <p className="text-sm text-expense">{error}</p>}
-            <div className="flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                disabled={busy}
-                className="rounded-lg border border-border px-4 py-2 text-sm text-muted hover:text-text"
-              >
-                Cancelar
-              </button>
-              <button
-                disabled={busy || typed !== WORD}
-                className="rounded-lg bg-expense px-4 py-2 text-sm font-medium text-bg disabled:opacity-60"
-              >
-                {busy ? 'Eliminando…' : 'Eliminar para siempre'}
-              </button>
-            </div>
-          </form>
-        </div>
+            <form onSubmit={submit} className="sheet max-w-sm">
+              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-expense/10 text-expense">
+                <TriangleAlert size={20} strokeWidth={1.75} />
+              </span>
+              <div className="space-y-1.5">
+                <h2 id="delete-title" className="text-lg font-semibold">
+                  ¿Eliminar tu cuenta para siempre?
+                </h2>
+                <p className="text-sm text-muted">
+                  Se borrarán tus deudas, abonos, movimientos, recurrentes y categorías. No se puede
+                  deshacer. Para confirmar, escribe <strong className="text-text">{WORD}</strong>.
+                </p>
+              </div>
+              <input
+                value={typed}
+                onChange={(event) => setTyped(event.target.value)}
+                aria-label={`Escribe ${WORD} para confirmar`}
+                autoFocus
+                autoComplete="off"
+                className="input input-danger"
+              />
+              {error && (
+                <p role="alert" className="text-sm text-expense">
+                  {error}
+                </p>
+              )}
+              <div className="flex justify-end gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  disabled={busy}
+                  className="btn btn-secondary"
+                >
+                  Cancelar
+                </button>
+                <button disabled={busy || typed !== WORD} className="btn btn-danger-solid">
+                  {busy && <LoaderCircle size={16} className="animate-spin" />}
+                  {busy ? 'Eliminando…' : 'Eliminar para siempre'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </Portal>
       )}
-    </section>
+    </SettingsSection>
   )
 }

@@ -1,8 +1,10 @@
 import { useState, type FormEvent } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Check, LoaderCircle, ShieldCheck } from 'lucide-react'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { supabase } from '../../lib/supabase'
 import { verifyCode } from './mfa'
+import { SettingsSection } from './SettingsSection'
 
 type Enrollment = { factorId: string; qr: string; secret: string }
 
@@ -94,30 +96,27 @@ export function TwoFactor() {
   const active = factors.data?.totp[0]
 
   return (
-    <section className="space-y-3 rounded-2xl border border-border bg-surface p-4">
-      <div>
-        <h2 className="font-semibold">Verificación en dos pasos</h2>
-        <p className="text-sm text-muted">
-          Pide un código de tu app de autenticación (Google Authenticator, Authy, 1Password…) al
-          iniciar sesión.
-        </p>
-      </div>
-
+    <SettingsSection
+      icon={ShieldCheck}
+      title="Verificación en dos pasos"
+      description="Pide un código de tu app de autenticación (Google Authenticator, Authy, 1Password…) al iniciar sesión."
+    >
       {factors.isPending ? (
         <p className="text-sm text-muted">Cargando…</p>
       ) : enrollment ? (
-        <form onSubmit={submit} className="space-y-3">
-          <p className="text-sm">
-            1. Escanea este código QR con tu app. 2. Escribe el código de 6 dígitos que te muestre.
-          </p>
+        <form onSubmit={submit} className="animate-slide-in space-y-5">
+          <ol className="space-y-1 text-sm text-muted">
+            <li>1. Escanea este código QR con tu app.</li>
+            <li>2. Escribe el código de 6 dígitos que te muestre.</li>
+          </ol>
           <img
             src={enrollment.qr}
             alt="Código QR para tu app de autenticación"
-            className="mx-auto h-44 w-44 rounded-lg bg-white p-2"
+            className="mx-auto h-44 w-44 rounded-xl bg-white p-2.5 shadow-card"
           />
           <p className="break-all text-center text-xs text-muted">
             ¿No puedes escanear? Escribe esta clave:{' '}
-            <span className="font-mono">{enrollment.secret}</span>
+            <span className="font-mono text-text">{enrollment.secret}</span>
           </p>
           <input
             value={code}
@@ -128,31 +127,25 @@ export function TwoFactor() {
             required
             minLength={6}
             maxLength={6}
-            className="w-full rounded-lg border border-border bg-bg px-3 py-2 text-center text-xl tracking-[0.4em] outline-none focus:border-accent"
+            className="input py-3.5 text-center text-2xl font-semibold tracking-[0.5em]"
           />
           <div className="flex gap-2">
-            <button
-              disabled={confirm.isPending || code.length !== 6}
-              className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-bg disabled:opacity-60"
-            >
+            <button disabled={confirm.isPending || code.length !== 6} className="btn btn-primary">
+              {confirm.isPending && <LoaderCircle size={16} className="animate-spin" />}
               Activar
             </button>
-            <button
-              type="button"
-              onClick={cancel}
-              className="rounded-lg border border-border px-4 py-2 text-sm text-muted hover:text-text"
-            >
+            <button type="button" onClick={cancel} className="btn btn-secondary">
               Cancelar
             </button>
           </div>
         </form>
       ) : active ? (
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm font-medium text-income">Activada</p>
-          <button
-            onClick={() => setConfirmingOff(true)}
-            className="rounded-lg border border-border px-4 py-2 text-sm text-muted hover:text-expense"
-          >
+          <p className="flex items-center gap-2 rounded-full bg-income/10 px-3 py-1.5 text-sm font-medium text-income">
+            <Check size={16} strokeWidth={2.25} />
+            Activada
+          </p>
+          <button onClick={() => setConfirmingOff(true)} className="btn btn-danger">
             Desactivar
           </button>
         </div>
@@ -160,13 +153,18 @@ export function TwoFactor() {
         <button
           onClick={() => start.mutate()}
           disabled={start.isPending}
-          className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-bg disabled:opacity-60"
+          className="btn btn-primary"
         >
+          {start.isPending && <LoaderCircle size={16} className="animate-spin" />}
           Activar verificación en dos pasos
         </button>
       )}
 
-      {error && <p className="text-sm text-expense">{error}</p>}
+      {error && (
+        <p role="alert" className="text-sm text-expense">
+          {error}
+        </p>
+      )}
 
       {confirmingOff && active && (
         <ConfirmDialog
@@ -178,6 +176,6 @@ export function TwoFactor() {
           onConfirm={() => disable.mutate(active.id)}
         />
       )}
-    </section>
+    </SettingsSection>
   )
 }

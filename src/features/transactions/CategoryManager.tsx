@@ -1,10 +1,11 @@
 import { useState, type FormEvent } from 'react'
+import { Tags } from 'lucide-react'
+import { Disclosure } from '../../components/Disclosure'
 import { useAddCategory, useCategories } from './api'
 
 export function CategoryManager() {
   const categories = useCategories()
   const add = useAddCategory()
-  const [open, setOpen] = useState(false)
   const [error, setError] = useState('')
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
@@ -27,47 +28,54 @@ export function CategoryManager() {
   }
 
   return (
-    <div className="space-y-3">
-      <button onClick={() => setOpen(!open)} className="text-sm text-accent">
-        {open ? 'Ocultar categorías' : 'Categorías'}
-      </button>
-      {open && (
-        <div className="space-y-3 rounded-2xl border border-border bg-surface p-4">
-          <ul className="flex flex-wrap gap-2 text-sm">
-            {categories.data?.map((category) => (
-              <li
-                key={category.id}
-                className={`rounded-full border px-3 py-1 ${
-                  category.essential ? 'border-accent text-accent' : 'border-border text-muted'
-                }`}
-              >
-                {category.name}
-                {category.essential && ' · esencial'}
-              </li>
-            ))}
-          </ul>
-          <form onSubmit={submit} className="flex flex-wrap items-center gap-3">
-            <input
-              name="name"
-              aria-label="Nombre de la categoría"
-              maxLength={60}
-              placeholder="Nueva categoría"
-              className="rounded-lg border border-border bg-bg px-3 py-2 text-sm outline-none focus:border-accent"
-            />
-            <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" name="essential" />
-              Esencial
-            </label>
-            <button
-              disabled={add.isPending}
-              className="rounded-lg bg-accent px-3 py-2 text-sm font-medium text-bg disabled:opacity-60"
+    <Disclosure
+      title="Categorías"
+      description="Marca como esenciales las que el plan nunca debe tocar."
+      icon={Tags}
+    >
+      <div className="space-y-5">
+        <ul className="flex flex-wrap gap-2">
+          {categories.data?.map((category) => (
+            <li
+              key={category.id}
+              className={`rounded-full border px-3 py-1.5 text-xs font-medium ${
+                category.essential
+                  ? 'border-accent/40 bg-accent/10 text-accent'
+                  : 'border-border bg-raised text-muted'
+              }`}
             >
-              Crear
-            </button>
-          </form>
-          {error && <p className="text-sm text-expense">{error}</p>}
-        </div>
-      )}
-    </div>
+              {category.name}
+              {category.essential && ' · esencial'}
+            </li>
+          ))}
+        </ul>
+
+        <form onSubmit={submit} className="flex flex-wrap items-center gap-3">
+          <input
+            name="name"
+            aria-label="Nombre de la categoría"
+            maxLength={60}
+            placeholder="Nueva categoría"
+            className="input w-auto min-w-0 flex-1"
+          />
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              name="essential"
+              className="h-4 w-4 accent-[rgb(var(--accent))]"
+            />
+            Esencial
+          </label>
+          <button disabled={add.isPending} className="btn btn-primary">
+            Crear
+          </button>
+        </form>
+        {error && (
+          <p role="alert" className="text-sm text-expense">
+            {error}
+          </p>
+        )}
+      </div>
+    </Disclosure>
   )
 }

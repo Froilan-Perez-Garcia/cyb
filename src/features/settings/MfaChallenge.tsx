@@ -1,4 +1,6 @@
 import { useState, type FormEvent } from 'react'
+import { LoaderCircle, ShieldCheck } from 'lucide-react'
+import { AuthLayout } from '../../components/AuthLayout'
 import { supabase } from '../../lib/supabase'
 import { verifyCode } from './mfa'
 
@@ -26,16 +28,21 @@ export function MfaChallenge({ onVerified }: { onVerified: () => void }) {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <form
-        onSubmit={submit}
-        className="w-full max-w-sm space-y-4 rounded-2xl border border-border bg-surface p-6"
-      >
-        <h1 className="text-2xl font-bold text-accent">Verificación en dos pasos</h1>
-        <p className="text-sm text-muted">
-          Escribe el código de 6 dígitos que muestra tu app de autenticación.
-        </p>
-        <label className="block space-y-1 text-sm">
+    <AuthLayout>
+      <form onSubmit={submit} className="space-y-6">
+        <div className="space-y-4">
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/10 text-accent">
+            <ShieldCheck size={24} strokeWidth={1.75} />
+          </span>
+          <div className="space-y-1.5">
+            <h1 className="text-3xl font-semibold">Verificación en dos pasos</h1>
+            <p className="text-sm text-muted">
+              Escribe el código de 6 dígitos que muestra tu app de autenticación.
+            </p>
+          </div>
+        </div>
+
+        <label className="field-label">
           <span>Código</span>
           <input
             value={code}
@@ -46,24 +53,33 @@ export function MfaChallenge({ onVerified }: { onVerified: () => void }) {
             required
             minLength={6}
             maxLength={6}
-            className="w-full rounded-lg border border-border bg-bg px-3 py-2 text-center text-xl tracking-[0.4em] outline-none focus:border-accent"
+            className="input py-3.5 text-center text-2xl font-semibold tracking-[0.5em]"
           />
         </label>
-        {error && <p className="text-sm text-expense">{error}</p>}
-        <button
-          disabled={busy || code.length !== 6}
-          className="w-full rounded-lg bg-accent px-3 py-2 font-medium text-bg disabled:opacity-60"
-        >
-          Verificar
-        </button>
-        <button
-          type="button"
-          onClick={() => supabase.auth.signOut()}
-          className="w-full text-sm text-muted hover:text-text"
-        >
-          Usar otra cuenta
-        </button>
+
+        {error && (
+          <p
+            role="alert"
+            className="animate-slide-in rounded-xl border border-expense/30 bg-expense/10 px-3.5 py-2.5 text-sm text-expense"
+          >
+            {error}
+          </p>
+        )}
+
+        <div className="space-y-3">
+          <button disabled={busy || code.length !== 6} className="btn btn-primary w-full py-3">
+            {busy && <LoaderCircle size={16} className="animate-spin" />}
+            Verificar
+          </button>
+          <button
+            type="button"
+            onClick={() => supabase.auth.signOut()}
+            className="btn btn-quiet w-full"
+          >
+            Usar otra cuenta
+          </button>
+        </div>
       </form>
-    </div>
+    </AuthLayout>
   )
 }

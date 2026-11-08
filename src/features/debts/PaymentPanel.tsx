@@ -1,9 +1,8 @@
-import { useState, type FormEvent } from 'react'
+import { useState, type FormEvent, type ReactNode } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { Check, ChevronDown, LoaderCircle } from 'lucide-react'
 import { formatMoney } from '../../lib/format'
 import { paymentSchema, useAddPayment, usePayments } from './paymentApi'
-
-const field =
-  'w-full rounded-lg border border-border bg-bg px-3 py-2 text-sm outline-none focus:border-accent'
 
 const today = () => new Date().toLocaleDateString('en-CA')
 
@@ -15,7 +14,9 @@ const formatDate = (iso: string) =>
     year: 'numeric',
   })
 
-export function PaymentPanel({ debtId, balance }: { debtId: string; balance: number }) {
+type Props = { debtId: string; balance: number; trailing?: ReactNode }
+
+export function PaymentPanel({ debtId, balance, trailing }: Props) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState('')
   const payments = usePayments(debtId, open)
@@ -36,58 +37,107 @@ export function PaymentPanel({ debtId, balance }: { debtId: string; balance: num
     })
   }
 
+  if (balance <= 0) {
+    return (
+      <div className="flex items-center justify-between gap-3">
+        <p className="flex items-center gap-2 text-sm font-medium text-income">
+          <Check size={16} strokeWidth={2} />
+          Deuda saldada
+        </p>
+        {trailing}
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-3">
-      <button
-        onClick={() => setOpen(!open)}
-        disabled={balance <= 0}
-        className="text-sm text-accent disabled:text-muted"
-      >
-        {balance <= 0 ? 'Deuda saldada' : open ? 'Ocultar abonos' : 'Abonar / historial'}
-      </button>
+      <div className="flex items-center justify-between gap-3">
+        <button
+          onClick={() => setOpen(!open)}
+          aria-expanded={open}
+          className="btn btn-secondary px-3.5 py-2"
+        >
+          {open ? 'Ocultar abonos' : 'Abonar / historial'}
+          <ChevronDown
+            size={16}
+            className={`transition-transform duration-300 ease-out ${open ? 'rotate-180' : ''}`}
+          />
+        </button>
+        {trailing}
+      </div>
 
-      {open && (
-        <div className="space-y-3 border-t border-border pt-3">
-          <form onSubmit={submit} className="grid grid-cols-2 gap-2">
-            <input
-              name="amount"
-              type="number"
-              step="0.01"
-              min="0.01"
-              max={balance}
-              inputMode="decimal"
-              required
-              placeholder="Monto"
-              className={field}
-            />
-            <input name="paid_on" type="date" required defaultValue={today()} className={field} />
-            <button
-              disabled={add.isPending}
-              className="col-span-2 rounded-lg bg-accent px-3 py-2 text-sm font-medium text-bg disabled:opacity-60"
-            >
-              Registrar abono
-            </button>
-          </form>
-          {error && <p className="text-sm text-expense">{error}</p>}
-
-          {payments.isPending ? (
-            <p className="text-sm text-muted">Cargando…</p>
-          ) : payments.data?.length ? (
-            <ul className="space-y-1 text-sm">
-              {payments.data.map((payment) => (
-                <li key={payment.id} className="flex justify-between">
-                  <span className="text-muted">{formatDate(payment.paid_on)}</span>
-                  <span className="font-medium text-income">
-                    −{formatMoney(Number(payment.amount))}
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="card-inset space-y-4 p-4">
+              <form onSubmit={submit} className="grid grid-cols-2 gap-2.5">
+                <label className="relative block">
+                  <span className="sr-only">Monto del abono</span>
+                  <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-muted">
+                    $
                   </span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-sm text-muted">Sin abonos todavía.</p>
-          )}
-        </div>
-      )}
+                  <input
+                    name="amount"
+                    type="number"
+                    step="0.01"
+                    min="0.01"
+                    max={balance}
+                    inputMode="decimal"
+                    required
+                    placeholder="Monto"
+                    className="input pl-8"
+                  />
+                </label>
+                <label className="block">
+                  <span className="sr-only">Fecha del abono</span>
+                  <input
+                    name="paid_on"
+                    type="date"
+                    required
+                    defaultValue={today()}
+                    className="input"
+                  />
+                </label>
+                <button disabled={add.isPending} className="btn btn-primary col-span-2">
+                  {add.isPending && <LoaderCircle size={16} className="animate-spin" />}
+                  Registrar abono
+                </button>
+              </form>
+
+              {error && (
+                <p role="alert" className="text-sm text-expense">
+                  {error}
+                </p>
+              )}
+
+              {payments.isPending ? (
+                <p className="text-sm text-muted">Cargando…</p>
+              ) : payments.data?.length ? (
+                <ul className="divide-y divide-border text-sm">
+                  {payments.data.map((payment) => (
+                    <li key={payment.id} className="flex items-center justify-between py-2">
+                      <span className="text-muted first-letter:uppercase">
+                        {formatDate(payment.paid_on)}
+                      </span>
+                      <span className="num font-medium text-income">
+                        −{formatMoney(Number(payment.amount))}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-muted">Sin abonos todavía.</p>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

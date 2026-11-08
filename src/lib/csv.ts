@@ -2,7 +2,7 @@ export type Column<T> = { label: string; value: (row: T) => string | number | nu
 
 const BOM = String.fromCharCode(0xfeff)
 
-const cell =(value: string | number | null) => {
+const cell = (value: string | number | null) => {
   const raw = value === null ? '' : String(value)
   const safe = typeof value === 'string' && /^[=+\-@\t\r]/.test(raw) ? `'${raw}` : raw
   return /[",\r\n]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe

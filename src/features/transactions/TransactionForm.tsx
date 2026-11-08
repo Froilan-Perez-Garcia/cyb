@@ -1,12 +1,13 @@
 import { useState, type FormEvent } from 'react'
+import { LoaderCircle } from 'lucide-react'
+import { Segmented } from '../../components/Segmented'
 import { toIso } from './period'
 import { useAddTransaction, useCategories, useUpdateTransaction } from './api'
 import { extraReasons, kindLabels, kinds, transactionSchema, type Transaction } from './schema'
 
-const field =
-  'w-full rounded-lg border border-border bg-bg px-3 py-2 outline-none focus:border-accent'
-
 type Props = { defaultDate: string; transaction?: Transaction; onDone?: () => void }
+
+const kindOptions = kinds.map((id) => ({ id, label: kindLabels[id] }))
 
 export function TransactionForm({ defaultDate, transaction, onDone }: Props) {
   const add = useAddTransaction()
@@ -40,23 +41,22 @@ export function TransactionForm({ defaultDate, transaction, onDone }: Props) {
   }
 
   return (
-    <form onSubmit={submit} className="space-y-3 rounded-2xl border border-border bg-surface p-4">
-      <div className="grid grid-cols-3 gap-1 rounded-lg bg-bg p-1">
-        {kinds.map((option) => (
-          <button
-            key={option}
-            type="button"
-            onClick={() => setKind(option)}
-            className={`rounded-md px-2 py-1.5 text-sm font-medium transition-colors ${
-              kind === option ? 'bg-accent text-bg' : 'text-muted hover:text-text'
-            }`}
-          >
-            {kindLabels[option]}
-          </button>
-        ))}
-      </div>
-      <div className="grid gap-3 sm:grid-cols-2">
-        <label className="block space-y-1 text-sm sm:col-span-2">
+    <form
+      onSubmit={submit}
+      className={transaction ? 'space-y-5 p-4 md:p-5' : 'card space-y-5 p-5 md:p-6'}
+    >
+      {!transaction && <h2 className="text-lg font-semibold">Nuevo movimiento</h2>}
+
+      <Segmented
+        name={transaction ? `kind-${transaction.id}` : 'kind'}
+        label="Tipo de movimiento"
+        options={kindOptions}
+        value={kind}
+        onChange={setKind}
+      />
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label className="field-label sm:col-span-2">
           <span>Concepto</span>
           <input
             name="concept"
@@ -64,23 +64,28 @@ export function TransactionForm({ defaultDate, transaction, onDone }: Props) {
             maxLength={120}
             placeholder="Papas"
             defaultValue={transaction?.concept}
-            className={field}
+            className="input"
           />
         </label>
-        <label className="block space-y-1 text-sm">
+        <label className="field-label">
           <span>Monto</span>
-          <input
-            name="amount"
-            type="number"
-            step="0.01"
-            min="0.01"
-            inputMode="decimal"
-            required
-            defaultValue={transaction?.amount}
-            className={field}
-          />
+          <span className="relative block">
+            <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-muted">
+              $
+            </span>
+            <input
+              name="amount"
+              type="number"
+              step="0.01"
+              min="0.01"
+              inputMode="decimal"
+              required
+              defaultValue={transaction?.amount}
+              className="input pl-8"
+            />
+          </span>
         </label>
-        <label className="block space-y-1 text-sm">
+        <label className="field-label">
           <span>Fecha</span>
           <input
             key={defaultDate}
@@ -88,17 +93,17 @@ export function TransactionForm({ defaultDate, transaction, onDone }: Props) {
             type="date"
             required
             defaultValue={transaction?.occurred_on ?? (defaultDate || toIso(new Date()))}
-            className={field}
+            className="input"
           />
         </label>
         {kind === 'gasto' && (
-          <label className="block space-y-1 text-sm sm:col-span-2">
+          <label className="field-label sm:col-span-2">
             <span>
-              Categoría <span className="text-muted">(opcional)</span>
+              Categoría <span className="field-hint">(opcional)</span>
             </span>
             <select
               name="category_id"
-              className={field}
+              className="input"
               defaultValue={transaction?.category_id ?? ''}
             >
               <option value="">Sin categoría</option>
@@ -112,9 +117,9 @@ export function TransactionForm({ defaultDate, transaction, onDone }: Props) {
           </label>
         )}
         {kind === 'extra' && (
-          <label className="block space-y-1 text-sm sm:col-span-2">
+          <label className="field-label sm:col-span-2">
             <span>Motivo</span>
-            <select name="reason" className={field} defaultValue={transaction?.reason ?? 'Bono'}>
+            <select name="reason" className="input" defaultValue={transaction?.reason ?? 'Bono'}>
               {extraReasons.map((reason) => (
                 <option key={reason} value={reason}>
                   {reason}
@@ -124,20 +129,23 @@ export function TransactionForm({ defaultDate, transaction, onDone }: Props) {
           </label>
         )}
       </div>
-      {error && <p className="text-sm text-expense">{error}</p>}
-      <div className="flex gap-2">
-        <button
-          disabled={pending}
-          className="rounded-lg bg-accent px-4 py-2 font-medium text-bg disabled:opacity-60"
+
+      {error && (
+        <p
+          role="alert"
+          className="rounded-xl border border-expense/30 bg-expense/10 px-3.5 py-2.5 text-sm text-expense"
         >
+          {error}
+        </p>
+      )}
+
+      <div className="flex gap-2">
+        <button disabled={pending} className="btn btn-primary">
+          {pending && <LoaderCircle size={16} className="animate-spin" />}
           {transaction ? 'Guardar cambios' : `Guardar ${kindLabels[kind].toLowerCase()}`}
         </button>
         {transaction && (
-          <button
-            type="button"
-            onClick={onDone}
-            className="rounded-lg border border-border px-4 py-2 text-muted hover:text-text"
-          >
+          <button type="button" onClick={onDone} className="btn btn-secondary">
             Cancelar
           </button>
         )}
