@@ -1,10 +1,9 @@
 const KEY = 'cyb-hue'
-const DEFAULT_HUE = 174
+const DEFAULT_HUE = 217
 
 export const presets = [
-  { name: 'Turquesa', hue: 174 },
-  { name: 'Cian', hue: 190 },
   { name: 'Azul', hue: 217 },
+  { name: 'Cian', hue: 190 },
   { name: 'Índigo', hue: 245 },
   { name: 'Violeta', hue: 270 },
   { name: 'Rosa', hue: 330 },
