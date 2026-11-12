@@ -6,28 +6,25 @@ import {
   ChevronLeft,
   CreditCard,
   LogOut,
-  MessagesSquare,
   Moon,
   Settings,
   Sun,
-  Target,
   type LucideIcon,
 } from 'lucide-react'
 import { useAuth } from '../app/useAuth'
 import { useTheme } from '../app/useTheme'
+import { useDebtsVisible } from '../features/debts/useDebtsVisible'
 import { useGenerateRecurring } from '../features/transactions/recurringApi'
 import { supabase } from '../lib/supabase'
 import { ColorMenu } from './ColorMenu'
 import { Logo } from './Logo'
 import { PageSkeleton } from './Skeleton'
 
-const sections: { to: string; label: string; icon: LucideIcon }[] = [
-  { to: '/bills', label: 'Bills', icon: CreditCard },
-  { to: '/movimientos', label: 'Movimientos', icon: ArrowLeftRight },
-  { to: '/plan', label: 'Plan', icon: Target },
-  { to: '/asesor', label: 'Asesor', icon: MessagesSquare },
-  { to: '/ajustes', label: 'Ajustes', icon: Settings },
-]
+type Section = { to: string; label: string; icon: LucideIcon }
+
+const flujo: Section = { to: '/flujo', label: 'Flujo', icon: ArrowLeftRight }
+const deudas: Section = { to: '/deudas', label: 'Deudas', icon: CreditCard }
+const ajustes: Section = { to: '/ajustes', label: 'Ajustes', icon: Settings }
 
 const spring = { type: 'spring', stiffness: 520, damping: 40 } as const
 
@@ -67,12 +64,7 @@ const labelClass = (collapsed: boolean) =>
 const railItem =
   'relative flex h-11 w-full items-center gap-3 rounded-xl px-[15px] text-sm font-medium text-rail-muted transition-colors duration-200 hover:text-rail-text'
 
-function RailLink({
-  to,
-  label,
-  icon: Icon,
-  collapsed,
-}: (typeof sections)[number] & { collapsed: boolean }) {
+function RailLink({ to, label, icon: Icon, collapsed }: Section & { collapsed: boolean }) {
   return (
     <NavLink
       to={to}
@@ -101,7 +93,7 @@ function RailLink({
   )
 }
 
-function TabLink({ to, label, icon: Icon }: (typeof sections)[number]) {
+function TabLink({ to, label, icon: Icon }: Section) {
   return (
     <NavLink
       to={to}
@@ -149,6 +141,8 @@ export function Layout() {
   const location = useLocation()
   const signOut = () => supabase.auth.signOut()
   const email = session?.user.email ?? ''
+  const { visible: showDebts } = useDebtsVisible()
+  const sections = showDebts ? [flujo, deudas, ajustes] : [flujo, ajustes]
   const [preference, setPreference] = useState(readPreference)
   const narrow = useNarrow()
   const collapsed = preference ? preference === 'collapsed' : narrow
@@ -270,7 +264,10 @@ export function Layout() {
         </div>
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-border bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
+      <nav
+        style={{ gridTemplateColumns: `repeat(${sections.length}, 1fr)` }}
+        className="fixed inset-x-0 bottom-0 z-40 grid border-t border-border bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
+      >
         {sections.map((section) => (
           <TabLink key={section.to} {...section} />
         ))}

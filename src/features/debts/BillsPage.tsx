@@ -81,7 +81,7 @@ export default function BillsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Bills"
+        title="Tus deudas"
         actions={
           !adding && (
             <button onClick={() => setAdding(true)} className="btn btn-primary">

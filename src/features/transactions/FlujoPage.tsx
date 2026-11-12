@@ -4,6 +4,7 @@ import {
   ArrowUpRight,
   ChevronLeft,
   ChevronRight,
+  CreditCard,
   Pencil,
   Receipt,
   Sparkles,
@@ -17,11 +18,16 @@ import { PageHeader } from '../../components/PageHeader'
 import { Segmented } from '../../components/Segmented'
 import { Skeleton } from '../../components/Skeleton'
 import { formatMoney } from '../../lib/format'
+import { setDebtsModule } from '../../lib/modules'
+import { useDebtsVisible } from '../debts/useDebtsVisible'
 import { useDeleteTransaction, useTransactions } from './api'
 import { CategoryManager } from './CategoryManager'
-import { dayLabel, getRange, periodLabel, shift, toIso, type View } from './period'
+import { dayLabel, getRange, parseIso, periodLabel, shift, toIso, type View } from './period'
+import { QuickAdd } from './QuickAdd'
 import { RecurringManager } from './RecurringManager'
+import { useRecurring } from './recurringApi'
 import { kindLabels, summarize, type Transaction } from './schema'
+import { SetupPrompt, SetupWizard } from './SetupWizard'
 import { TransactionForm } from './TransactionForm'
 
 const views: { id: View; label: string }[] = [
@@ -86,23 +92,78 @@ function SpendBar({ spent, earned }: { spent: number; earned: number }) {
   )
 }
 
-export default function MovimientosPage() {
-  const [view, setView] = useState<View>('quincena')
+function Breakdown({ transactions }: { transactions: Transaction[] }) {
+  const totals = new Map<string, number>()
+  for (const item of transactions) {
+    if (item.kind !== 'gasto') continue
+    const name = item.categories?.name ?? 'Sin categoría'
+    totals.set(name, (totals.get(name) ?? 0) + Number(item.amount))
+  }
+  const rows = [...totals.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5)
+  if (rows.length === 0) return null
+  const max = rows[0][1]
+
+  return (
+    <section className="card animate-slide-in space-y-4 p-5 md:p-6">
+      <h2 className="font-semibold">En qué se va</h2>
+      <ul className="space-y-3">
+        {rows.map(([name, total]) => (
+          <li key={name} className="space-y-1.5">
+            <div className="flex items-baseline justify-between gap-3 text-sm">
+              <span className="truncate">{name}</span>
+              <span className="num shrink-0 font-medium">{formatMoney(total)}</span>
+            </div>
+            <div className="h-1.5 overflow-hidden rounded-full bg-raised">
+              <div
+                className="h-full origin-left animate-grow rounded-full bg-accent/70"
+                style={{ width: `${(total / max) * 100}%` }}
+              />
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+function DebtsInvite() {
+  const { visible } = useDebtsVisible()
+  if (visible) return null
+
+  return (
+    <section className="flex flex-wrap items-center gap-3 rounded-2xl border border-dashed border-border p-4">
+      <CreditCard size={18} strokeWidth={1.75} className="shrink-0 text-muted" />
+      <p className="min-w-0 flex-1 basis-48 text-sm text-muted">
+        ¿Tienes tarjetas o deudas? Activa su control y verás un plan para pagarlas.
+      </p>
+      <button onClick={() => setDebtsModule(true)} className="btn btn-secondary">
+        Activar deudas
+      </button>
+    </section>
+  )
+}
+
+export default function FlujoPage() {
+  const [view, setView] = useState<View>('mes')
   const [anchor, setAnchor] = useState(() => new Date())
   const { from, to } = getRange(view, anchor)
   const { data: transactions, isPending, error } = useTransactions(from, to)
   const remove = useDeleteTransaction()
+  const recurring = useRecurring()
+  const [settingUp, setSettingUp] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState<Transaction | null>(null)
 
   const summary = transactions ? summarize(transactions) : null
   const today = toIso(new Date())
-  const defaultDate = today >= from && today <= to ? today : from
+  const includesToday = today >= from && today <= to
+  const defaultDate = includesToday ? today : from
+  const daysLeft = Math.round((parseIso(to).getTime() - parseIso(today).getTime()) / 86400000) + 1
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Movimientos"
+        title="Flujo"
         actions={
           <Segmented
             name="view"
@@ -133,17 +194,29 @@ export default function MovimientosPage() {
         </button>
       </div>
 
+      {recurring.data?.length === 0 && <SetupPrompt onStart={() => setSettingUp(true)} />}
+      {settingUp && <SetupWizard onClose={() => setSettingUp(false)} />}
+
       {isPending || !summary ? (
         <Skeleton className="h-44" />
       ) : (
         <section className="card animate-slide-in space-y-5 p-5 md:p-6">
           <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-5">
             <div>
-              <p className="text-sm text-muted">Balance</p>
+              <p className="text-sm text-muted">{includesToday ? 'Te queda' : 'Balance'}</p>
               <AnimatedMoney
                 value={summary.balance}
                 className={`block text-4xl font-semibold ${summary.balance >= 0 ? 'text-income' : 'text-expense'}`}
               />
+              {includesToday && (
+                <p className="mt-1 text-sm text-muted">
+                  {summary.balance > 0
+                    ? `≈ ${formatMoney(summary.balance / daysLeft)} al día durante ${daysLeft} ${daysLeft === 1 ? 'día' : 'días'}`
+                    : summary.balance < 0
+                      ? 'Estás gastando más de lo que entró'
+                      : 'Sin margen por ahora'}
+                </p>
+              )}
             </div>
             <dl className="grid grid-cols-3 gap-6">
               {[
@@ -164,7 +237,9 @@ export default function MovimientosPage() {
         </section>
       )}
 
-      <TransactionForm defaultDate={defaultDate} />
+      {transactions && <Breakdown transactions={transactions} />}
+
+      <QuickAdd defaultDate={defaultDate} />
 
       {deleting && (
         <ConfirmDialog
@@ -192,7 +267,7 @@ export default function MovimientosPage() {
         <EmptyState
           icon={Receipt}
           title="Sin movimientos en este periodo"
-          text="Registra un gasto o un ingreso con el formulario de arriba."
+          text="Toca el botón + para registrar un gasto o un ingreso."
         />
       ) : (
         <div className="space-y-6">
@@ -270,6 +345,8 @@ export default function MovimientosPage() {
           })}
         </div>
       )}
+
+      <DebtsInvite />
 
       <div className="space-y-4">
         <RecurringManager />

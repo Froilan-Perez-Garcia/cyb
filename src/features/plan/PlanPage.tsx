@@ -124,7 +124,7 @@ export default function PlanPage() {
         <EmptyState
           icon={Target}
           title="Aún no hay un plan"
-          text="Registra al menos una deuda con saldo en Bills para ver tu plan."
+          text="Registra al menos una deuda con saldo en Mis deudas para ver tu plan."
         />
       </div>
     )

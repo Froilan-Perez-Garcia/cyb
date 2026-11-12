@@ -3,6 +3,7 @@ import { useAuth } from '../../app/useAuth'
 import { PageHeader } from '../../components/PageHeader'
 import { supabase } from '../../lib/supabase'
 import { AccentPicker } from './AccentPicker'
+import { DebtsToggle } from './DebtsToggle'
 import { DeleteAccount } from './DeleteAccount'
 import { ExportData } from './ExportData'
 import { InstallApp } from './InstallApp'
@@ -26,6 +27,7 @@ export default function AjustesPage() {
         </div>
       </SettingsSection>
 
+      <DebtsToggle />
       <AccentPicker />
       <TwoFactor />
       <InstallApp />

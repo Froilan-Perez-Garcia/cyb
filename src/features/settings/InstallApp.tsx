@@ -41,8 +41,8 @@ export function InstallApp() {
         </button>
       ) : (
         <p className="text-sm text-muted">
-          En iPhone: toca Compartir y luego «Añadir a pantalla de inicio». En Chrome o Edge:
-          busca el icono de instalar en la barra de direcciones o en el menú.
+          En iPhone: toca Compartir y luego «Añadir a pantalla de inicio». En Chrome o Edge: busca
+          el icono de instalar en la barra de direcciones o en el menú.
         </p>
       )}
     </SettingsSection>

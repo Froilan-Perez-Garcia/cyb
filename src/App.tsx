@@ -12,10 +12,8 @@ import { MfaSetup } from './features/settings/MfaSetup'
 import { useMfaGate } from './features/settings/mfa'
 import { isConfigured } from './lib/supabase'
 
-const BillsPage = lazy(() => import('./features/debts/BillsPage'))
-const MovimientosPage = lazy(() => import('./features/transactions/MovimientosPage'))
-const PlanPage = lazy(() => import('./features/plan/PlanPage'))
-const AsesorPage = lazy(() => import('./features/advisor/AsesorPage'))
+const FlujoPage = lazy(() => import('./features/transactions/FlujoPage'))
+const DeudasPage = lazy(() => import('./features/debts/DeudasPage'))
 const AjustesPage = lazy(() => import('./features/settings/AjustesPage'))
 const LoginPage = lazy(() => import('./features/settings/LoginPage'))
 
@@ -44,7 +42,7 @@ function Public() {
         <PageSkeleton />
       </div>
     )
-  return session ? <Navigate to="/bills" replace /> : <LoginPage />
+  return session ? <Navigate to="/flujo" replace /> : <LoginPage />
 }
 
 function MissingConfig() {
@@ -69,11 +67,13 @@ export default function App() {
                 <Routes>
                   <Route path="/login" element={<Public />} />
                   <Route element={<Protected />}>
-                    <Route index element={<Navigate to="/bills" replace />} />
-                    <Route path="/bills" element={<BillsPage />} />
-                    <Route path="/movimientos" element={<MovimientosPage />} />
-                    <Route path="/plan" element={<PlanPage />} />
-                    <Route path="/asesor" element={<AsesorPage />} />
+                    <Route index element={<Navigate to="/flujo" replace />} />
+                    <Route path="/flujo" element={<FlujoPage />} />
+                    <Route path="/deudas" element={<DeudasPage />} />
+                    <Route path="/movimientos" element={<Navigate to="/flujo" replace />} />
+                    <Route path="/bills" element={<Navigate to="/deudas" replace />} />
+                    <Route path="/plan" element={<Navigate to="/deudas" replace />} />
+                    <Route path="/asesor" element={<Navigate to="/deudas" replace />} />
                     <Route path="/ajustes" element={<AjustesPage />} />
                   </Route>
                 </Routes>

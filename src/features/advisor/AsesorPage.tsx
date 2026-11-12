@@ -164,7 +164,7 @@ export default function AsesorPage() {
     } else if (planDebts.length === 0) {
       push(user, {
         role: 'assistant',
-        text: 'Para aconsejarte sobre tu caso necesito que registres al menos una deuda en Bills.',
+        text: 'Para aconsejarte sobre tu caso necesito que registres al menos una deuda en Mis deudas.',
       })
     } else if (remaining <= 0) {
       push(user, {
