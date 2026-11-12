@@ -260,7 +260,7 @@ void main() {
     vec2 d = uv - uPointer;
     d.x *= uAspect;
     float dist = length(d);
-    float zone = smoothstep(0.15, 0.0, dist) * uPointerPower;
+    float zone = (1.0 - smoothstep(0.0, 0.15, dist)) * uPointerPower;
     if (zone > 0.0) {
       vec4 hj = hash4(vUv + vec2(uTime, 1.0));
       vec3 dir = vec3(d / (dist + 1e-4), (hj.z - 0.5) * 1.6);
