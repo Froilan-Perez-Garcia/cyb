@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase'
 import { AccentPicker } from './AccentPicker'
 import { DeleteAccount } from './DeleteAccount'
 import { ExportData } from './ExportData'
+import { InstallApp } from './InstallApp'
 import { SettingsSection } from './SettingsSection'
 import { TwoFactor } from './TwoFactor'
 
@@ -27,6 +28,7 @@ export default function AjustesPage() {
 
       <AccentPicker />
       <TwoFactor />
+      <InstallApp />
       <ExportData />
       <DeleteAccount />
     </div>

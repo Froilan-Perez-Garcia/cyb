@@ -8,6 +8,7 @@ import { useAuth } from './app/useAuth'
 import { Layout } from './components/Layout'
 import { PageSkeleton } from './components/Skeleton'
 import { MfaChallenge } from './features/settings/MfaChallenge'
+import { MfaSetup } from './features/settings/MfaSetup'
 import { useMfaGate } from './features/settings/mfa'
 import { isConfigured } from './lib/supabase'
 
@@ -30,6 +31,7 @@ function Protected() {
       </div>
     )
   if (!session) return <Navigate to="/login" replace />
+  if (mfa.setup) return <MfaSetup onDone={mfa.clear} />
   if (mfa.required) return <MfaChallenge onVerified={mfa.clear} />
   return <Layout />
 }

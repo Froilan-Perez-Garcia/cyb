@@ -2,15 +2,17 @@ import { useEffect, useState } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { supabase } from '../../lib/supabase'
 
+const idle = { loading: false, required: false, setup: false }
+
 export function useMfaGate(session: Session | null) {
-  const [state, setState] = useState({ loading: true, required: false })
+  const [state, setState] = useState({ ...idle, loading: true })
   const userId = session?.user.id
 
   useEffect(() => {
     let active = true
     setState((current) => ({ ...current, loading: true }))
     if (!userId) {
-      setState({ loading: false, required: false })
+      setState(idle)
       return
     }
     supabase.auth.mfa.getAuthenticatorAssuranceLevel().then(({ data }) => {
@@ -18,6 +20,7 @@ export function useMfaGate(session: Session | null) {
       setState({
         loading: false,
         required: data?.nextLevel === 'aal2' && data.currentLevel !== 'aal2',
+        setup: data?.nextLevel !== 'aal2',
       })
     })
     return () => {
@@ -25,7 +28,7 @@ export function useMfaGate(session: Session | null) {
     }
   }, [userId])
 
-  return { ...state, clear: () => setState({ loading: false, required: false }) }
+  return { ...state, clear: () => setState(idle) }
 }
 
 export async function verifyCode(factorId: string, code: string) {
